@@ -1,0 +1,124 @@
+{% extends "base.html" %} {% block title %}Inventory Management - Single
+Product: {{ product.id }}{% endblock %} {% block content %}
+<div
+  class="container"
+  style="
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+  "
+>
+  <h1>Product: {{ product.name }}</h1>
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-primary">
+        <div class="card-header bg-primary text-white">
+          <h2 class="card-title">{{ product.name }}</h2>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <img
+                src="{{ product.image.url }}"
+                class="card-img-top mb-3"
+                alt="{{ product.name }}"
+              />
+            </div>
+            <div class="col-md-6">
+              <p class="card-text">{{ product.description }}</p>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                  <strong>Price:</strong> ${{ product.price }}
+                </li>
+                <li class="list-group-item">
+                  <strong>Quantity:</strong> {{ product.quantity }}
+                </li>
+              </ul>
+
+              <div
+                style="
+                  display: flex;
+                  justify-content: center;
+                  gap: 1rem;
+                  padding: 2rem;
+                  padding-top: 12rem;
+                "
+              >
+                <button
+                  type="button"
+                  class="btn btn-danger btn-sm"
+                  data-bs-toggle="modal"
+                  data-bs-target="#deleteProduct{{ product.id }}"
+                >
+                  <i class="fas fa-trash-alt"></i> Delete
+                </button>
+                <!-- Delete confirmation modal for each product -->
+                <div
+                  class="modal fade"
+                  id="deleteProduct{{ product.id }}"
+                  tabindex="-1"
+                  aria-labelledby="deleteProductModalLabel{{ product.id }}"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5
+                          class="modal-title"
+                          id="deleteProductModalLabel{{ product.id }}"
+                        >
+                          Confirm Delete
+                        </h5>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">
+                        Are you sure you want to delete {{ product.name }}?
+                      </div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-bs-dismiss="modal"
+                        >
+                          Close
+                        </button>
+                        <form
+                          action="{% url 'products_application:delete_product_action' product.id %}"
+                          method="post"
+                          style="display: inline"
+                        >
+                          {% csrf_token %}
+                          <input
+                            type="hidden"
+                            name="confirm_delete"
+                            value="1"
+                          />
+                          <button type="submit" class="btn btn-danger">
+                            Delete
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <a
+                  href="{% url 'products_application:edit_product_screen' product.id %}"
+                  class="btn btn-warning btn-sm"
+                  ><i class="fas fa-edit"></i> Edit</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

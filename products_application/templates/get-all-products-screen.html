@@ -1,0 +1,111 @@
+{% extends "base.html" %} 
+{% block title %} Inventory Management - All Products {% endblock %}
+
+{% block content %}
+<div
+  style="
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+  "
+>
+  <h1>Inventory Management - All Products</h1>
+
+  {% if products %}
+  <div class="table-responsive" style="padding: 2rem; width: 58rem">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">Price</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+        <tr>
+          <td>{{ product.name }}</td>
+          <td>{{ product.quantity }}</td>
+          <td>{{ product.price }}</td>
+          <td>
+            <a
+              href="{% url 'products_application:product_details_screen' product.id %}"
+              class="btn btn-primary btn-sm"
+              ><i class="far fa-eye"></i> View Details</a
+            >
+            <!-- View details button -->
+            <button
+              type="button"
+              class="btn btn-danger btn-sm"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteProduct{{ product.id }}"
+            >
+              <i class="fas fa-trash-alt"></i> Delete
+            </button>
+            <a
+              href="{% url 'products_application:edit_product_screen' product.id %}"
+              class="btn btn-warning btn-sm"
+              ><i class="fas fa-edit"></i> Edit</a
+            >
+          </td>
+        </tr>
+        <!-- Delete confirmation modal for each product -->
+        <div
+          class="modal fade"
+          id="deleteProduct{{ product.id }}"
+          tabindex="-1"
+          aria-labelledby="deleteProductModalLabel{{ product.id }}"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5
+                  class="modal-title"
+                  id="deleteProductModalLabel{{ product.id }}"
+                >
+                  Confirm Delete
+                </h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                Are you sure you want to delete {{ product.name }}?
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Close
+                </button>
+                <form
+                  action="{% url 'products_application:delete_product_action' product.id %}"
+                  method="post"
+                  style="display: inline"
+                >
+                  {% csrf_token %}
+                  <input type="hidden" name="confirm_delete" value="1" />
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <h1>Products not found! We have 0 products on the database</h1>
+  {% endif %}
+</div>
+{% endblock %}
